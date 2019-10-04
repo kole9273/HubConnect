@@ -17,12 +17,13 @@
  */
 metadata 
 {
-	definition(name: "HubConnect RGB Bulb", namespace: "shackrat", author: "Steve White", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/HubConnect/master/UniversalDrivers/HubConnect-RGB-Bulb.groovy")
+	definition(name: "HubConnect RGBW Bulb", namespace: "shackrat", author: "Steve White", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/HubConnect/master/UniversalDrivers/HubConnect-RGB-Bulb.groovy")
 	{
 		capability "Switch"
 		capability "Switch Level"
 		capability "Color Control"
 		capability "Color Temperature"
+		capability "ColorMode"
 		capability "Refresh"
 
 		attribute "version", "string"

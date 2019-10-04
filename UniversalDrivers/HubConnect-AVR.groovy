@@ -17,16 +17,19 @@
  */
 metadata 
 {
-	definition(name: "HubConnect RGB Bulb", namespace: "shackrat", author: "Steve White", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/HubConnect/master/UniversalDrivers/HubConnect-RGB-Bulb.groovy")
+	definition(name: "HubConnect AVR", namespace: "shackrat", author: "Steve White", importUrl: "https://raw.githubusercontent.com/HubitatCommunity/HubConnect/master/UniversalDrivers/HubConnect-AVR.groovy")
 	{
 		capability "Switch"
-		capability "Switch Level"
-		capability "Color Control"
-		capability "Color Temperature"
 		capability "Refresh"
+		capability "Actuator"
+		capability "Telnet"
+		capability "Initialize"
+		capability "AudioVolume"
 
+		attribute "mediaInputSource", "string"
 		attribute "version", "string"
 
+		command "setInputSource", [[name:"Id*", type: "NUMBER", description: "Input ID" ]]
 		command "sync"
 	}
 }
@@ -77,6 +80,63 @@ def parse(String description)
 
 
 /*
+	setVolume
+    
+	Does what it says.
+*/
+def setVolume(value)
+{
+	parent.sendDeviceEvent(device.deviceNetworkId, "setVolume", [value])
+}
+
+
+/*
+	editCurrentInputName
+    
+	Does what it says.
+*/
+def editCurrentInputName(value)
+{
+	parent.sendDeviceEvent(device.deviceNetworkId, "editCurrentInputName", [value])
+}
+
+
+/*
+	setInputSource
+    
+	Does what it says.
+*/
+def setInputSource(value)
+{
+	parent.sendDeviceEvent(device.deviceNetworkId, "setInputSource", [value])
+}
+
+
+/*
+	mute
+    
+	Mutes the device.
+*/
+def mute()
+{
+	// The server will update on/off status
+	parent.sendDeviceEvent(device.deviceNetworkId, "mute")
+}
+
+
+/*
+	unmute
+    
+	Unmutes the device.
+*/
+def unmute()
+{
+	// The server will update on/off status
+	parent.sendDeviceEvent(device.deviceNetworkId, "unmute")
+}
+
+
+/*
 	on
     
 	Turns the device on.
@@ -101,64 +161,26 @@ def off()
 
 
 /*
-	setLevel
+	volumeUp
     
-	Sets the level to <level> over duration <duration>.
+	volumeUp on the device.
 */
-def setLevel(value, duration=1)
+def volumeUp()
 {
-	// The server will respond with a level attribute message.
-	parent.sendDeviceEvent(device.deviceNetworkId, "setLevel", [value, duration])
+	// The server will update status
+	parent.sendDeviceEvent(device.deviceNetworkId, "volumeUp")
 }
 
 
 /*
-	setColor
+	volumeDown
     
-	Sets color by setting both hue and saturation as specified by <value>.
+	volumeDown on the device.
 */
-def setColor(value)
-{
-	if (value.hue == null || value.saturation == null) return
-
-	// The server will update status
-	parent.sendDeviceEvent(device.deviceNetworkId, "setColor", [[hue: value.hue, saturation: value.saturation, level: value?.level]])
-}
-
-
-/*
-	setHue
-    
-	Sets the Hue based on <value>.
-*/
-def setHue(value)
+def volumeDown()
 {
 	// The server will update status
-	parent.sendDeviceEvent(device.deviceNetworkId, "setHue", [value])
-}
-
-
-/*
-	setSaturation
-    
-	Sets the Saturation based on <value>.
-*/
-def setSaturation(value)
-{
-	// The server will update status
-	parent.sendDeviceEvent(device.deviceNetworkId, "setSaturation", [value])
-}
-
-
-/*
-	setColorTemperature
-    
-	Sets the Color Temperature based on <value>.
-*/
-def setColorTemperature(value)
-{
-	// The server will update status
-	parent.sendDeviceEvent(device.deviceNetworkId, "setColorTemperature", [value])
+	parent.sendDeviceEvent(device.deviceNetworkId, "volumeDown")
 }
 
 
@@ -182,7 +204,7 @@ def refresh()
 def sync()
 {
 	// The server will respond with updated status and details
-	parent.syncDevice(device.deviceNetworkId, "rgbbulb")
+	parent.syncDevice(device.deviceNetworkId, "switch")
 	sendEvent([name: "version", value: "v${driverVersion.major}.${driverVersion.minor}.${driverVersion.build}"])
 }
-def getDriverVersion() {[platform: "Universal", major: 1, minor: 2, build: 2]}
+def getDriverVersion() {[platform: "Universal", major: 1, minor: 4, build: 0]}
